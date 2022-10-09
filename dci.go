@@ -23,11 +23,11 @@ type DCI interface {
 
 	// ReadBit generates read time slot on the bus. It returns received bit
 	// value (0 or 1) or error.
-	ReadBit() (bit byte, err error)
+	ReadBit() (bit int, err error)
 
-	// WriteBit generates write slot on the bus. It sends 0 if bit == 0 or 1
+	// WriteBit generates write slot on the bus. It sends 0 if bit&1 == 0 or 1
 	// otherwise.
-	WriteBit(bit byte) error
+	WriteBit(bit int) error
 
 	// ReadByte receives a byte by generating 8 read slots on the bus. It
 	// returns read byte or error.

@@ -15,6 +15,12 @@ type Search struct {
 	lastd int8
 }
 
+func NewSearch(typ Type, alarm bool) *Search {
+	s := new(Search)
+	s.Init(typ, alarm)
+	return s
+}
+
 func (s *Search) Reset() {
 	s.err = nil
 	s.dev = Dev{}
@@ -31,12 +37,6 @@ func (s *Search) Init(typ Type, alarm bool) {
 	}
 }
 
-func MakeSearch(typ Type, alarm bool) Search {
-	var s Search
-	s.Init(typ, alarm)
-	return s
-}
-
 func (s *Search) Dev() Dev {
 	return Dev(s.dev)
 }
@@ -45,7 +45,7 @@ func (s *Search) Err() error {
 	return s.err
 }
 
-func (m *Master) nextBit() (bit, neg byte, err error) {
+func nextBit(m *Master) (bit, neg int, err error) {
 	bit, err = m.ReadBit()
 	if err != nil {
 		return
@@ -62,7 +62,7 @@ func (m *Master) nextBit() (bit, neg byte, err error) {
 
 // SearchNext can be used to perform a search for 1-Wire slave devices
 // connected to the bus controled by m.
-// It saves current state in s and returns true if next device was found or
+// It saves current state in s and returns true if a next device was found or
 // false if no more devices or error occurred. Use s.Dev() to get the device
 // found, s.Err() to check for error.
 func (m *Master) SearchNext(s *Search) bool {
@@ -78,8 +78,8 @@ func (m *Master) SearchNext(s *Search) bool {
 	k := 0
 	if s.typ != 0 {
 		for i := 0; i < 8; i++ {
-			nb := byte(s.typ>>uint(i)) & 1
-			bit, cmp, err := m.nextBit()
+			nb := int(s.typ>>uint(i)) & 1
+			bit, cmp, err := nextBit(m)
 			if err != nil {
 				s.err = err
 				return false
@@ -98,7 +98,7 @@ func (m *Master) SearchNext(s *Search) bool {
 	last0 := -1
 	for k < len(s.dev) {
 		for i := 0; i < 8; i++ {
-			bit, cmp, err := m.nextBit()
+			bit, cmp, err := nextBit(m)
 			if err != nil {
 				s.err = err
 				return false
@@ -119,7 +119,7 @@ func (m *Master) SearchNext(s *Search) bool {
 					*dp |= b
 				default: // i < s.lastd
 					// Take previous dir.
-					bit = byte((*dp & b) >> uint(i))
+					bit = int((*dp & b) >> uint(i))
 				}
 				if bit == 0 {
 					last0 = i
