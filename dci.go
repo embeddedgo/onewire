@@ -17,7 +17,7 @@ var (
 // should provide access to 1-Wire low-level signaling. It is used by Master
 // to implement higher layer protocols.
 type DCI interface {
-	// Reset sends reset pulse. If there is no presence pulse received it
+	// Reset sends a reset pulse. If there is no a presence pulse received it
 	// returns ErrNoResponse error.
 	Reset() error
 
