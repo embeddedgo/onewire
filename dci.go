@@ -11,6 +11,7 @@ var (
 	ErrBusFault   = errors.New("bus fault")
 	ErrCRC        = errors.New("bad CRC")
 	ErrDevType    = errors.New("bad device type")
+	ErrData       = errors.New("data error")
 )
 
 // DCI means Data and Control Interface. It contains set of methods that

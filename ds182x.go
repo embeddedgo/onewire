@@ -61,6 +61,9 @@ func (s *Scratchpad) Temp16(typ Type) (int, error) {
 		temp16 := int(uint(s[1])<<11 + uint(s[0])>>1<<4)
 		remain := int(s[6])
 		perC := int(s[7])
+		if perC == 0 {
+			return 300 * 16, ErrData
+		}
 		return temp16 - 4 + (perC-remain)*16/perC, nil
 	}
 	return -300 * 16, ErrDevType
